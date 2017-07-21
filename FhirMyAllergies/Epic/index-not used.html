@@ -1,0 +1,71 @@
+﻿ <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>My Allergies</title>
+    <script type="text/javascript" src="/Scripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap.js"></script>
+    <script type="text/javascript" src="/Scripts/angular.min.js"></script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/smart-on-fhir/client-js/v0.1.8/dist/fhir-client.js"></script>
+    <script type="text/javascript" src="/Scripts/myFhir.js"></script>
+    <script type="text/javascript" src="/Scripts/myAngularApp.js"></script>
+</head>
+
+<body>
+
+    <div ng-app="myApp" ng-controller="myCtrl">
+        
+        <div id="selectOrg">
+            <select ng-model="fhirEndpointUrl" ng-change="updateSettings()">
+                <option ng-repeat="x in fhirOrgs" value="{{x.FHIRPatientFacingURI}}">{{x.OrganizationName}}</option>
+            </select> 
+        </div>
+
+        <div id="testCase">
+            <button ng-click="testCase('epic')">Epic Sandbox</button>
+            <button ng-click="testCase('sandford')">Standford</button>
+            <button ng-click="testCase('ohmcExt')">OHMC External</button>
+            <button ng-click="testCase('ohmcInt')">OHMC Internal</button>
+        </div>
+
+        <div class="form-group">
+            <label for="fhirBaseUrl">Fhir base url : </label>
+            <span id="fhirBaseUrl" type="text" class="form-control">{{fhirBaseUrl}}</span>
+        </div>
+
+        <div class="form-group">
+            <label for="fhirAuthUrl">Fhir authorize url : </label>
+            <span id="fhirAuthUrl" type="text">{{fhirAuthUrl}}</span>
+        </div>
+
+        <div class="form-group">
+            <label for="fhirTokenUrl">Fhir token url : </label>
+            <span id="fhirTokenUrl" type="text">{{fhirTokenUrl}}</span>
+        </div>
+        <div>Endpoint Url : <span>{{fhirEndpointUrl}}</span></div>
+        <div>client ID : <span>clientId</span></div>
+
+
+        <button class="btn" ng-click="oauthLogin()">Step 1: Get Authorization Code</button>
+        <p><strong>Authorization Code : </strong><span>oauthCode</span></p>
+
+        <button class="btn" ng-click="getAccessToken()">Step 2: Get Access Token with $http</button>
+        <button class="btn" ng-click="getAccessToken2()">Step 2: Get Access Token with JQuery</button>
+        <p><strong>Access Token : </strong><span>{{accessToken}}</span></p>
+        <p><strong>Patient ID</strong><span>{{patient}}</span></p>
+        <p><pre><code id="accessToken" ng-bind="accessTokenJson"></code></pre></p>
+
+        <button class="btn" ng-click="getPatData({ name: 'Patient' })">Step 3: Get Patient Demographics</button>        
+        <button class="btn" ng-click="getPatData({ name: 'AllergyIntolerance' })">Step 3: Get Patient Allergy</button>
+        <button class="btn" ng-click="getPatData({ name: 'Immunization' })">Step 3: Get Patient Immunization</button>
+        <button class="btn" ng-click="getPatData({ name: 'MedicationOrder' })">Step 3: Get Patient Medication Order</button>
+        <button class="btn" ng-click="getPatData({ name: 'Observation', queryFilter: 'category=laboratory', displayOverride: 'Observation-laboratory', })">Step 3: Get Patient Labortory Observation</button>
+        <button class="btn" ng-click="smartGet('MedicationOrder')">Step 3: Get Patient Medication Smart</button>
+
+        
+
+        <div><pre id="fhirData" ng-bind="fhirData" class="json"></pre></div>
+    </div>
+
+
+</body>
+</html>

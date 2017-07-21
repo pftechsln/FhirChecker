@@ -1,0 +1,8 @@
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\bin\FhirMyAllergies.dll.config
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\bin\FhirMyAllergies.dll
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\bin\FhirMyAllergies.pdb
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\bin\Newtonsoft.Json.dll
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\bin\Newtonsoft.Json.xml
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\obj\Debug\FhirMyAllergies.csprojResolveAssemblyReference.cache
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\obj\Debug\FhirMyAllergies.dll
+\\ohmc.org\ohmc\users\pli\visual studio 2013\Projects\FhirMyAllergies\FhirMyAllergies\obj\Debug\FhirMyAllergies.pdb
