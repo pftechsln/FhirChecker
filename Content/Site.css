@@ -10,7 +10,7 @@ body {
 
 .jumbotron {
     color: orange;
-    background-image: url(~/Images/background.png);
+    background-image: url(/FhirChecker/Images/background.png);
     background-color: #43addb;
 }
 
