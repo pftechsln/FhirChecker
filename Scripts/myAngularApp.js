@@ -368,12 +368,17 @@ function displayAllergy(data, $scope) {
             oneAllergy["Status"] = tmpEntry.status;
             oneAllergy["Recorded Date"] = tmpEntry.recordedDate.split("T")[0];
 
+            if (tmpEntry["reaction"] == 'undefined') {
+                oneAllergy["Reaction"] = "";
+            } else {
+          
             tmpStr = "";
             for (ln2 = 0; ln2 < tmpEntry.reaction.length; ln2++) {
                 if (ln2 > 0) { tmpStr = tmpStr + ", " };
                 tmpStr = tmpStr + tmpEntry.reaction[ln2].manifestation[0].text;
             }
             oneAllergy["Reaction"] = tmpStr;
+            }
 
             if (typeof tmpEntry["note"] == 'undefined')
             {
