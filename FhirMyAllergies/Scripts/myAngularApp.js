@@ -77,6 +77,40 @@ function launch($scope, $http) {
 
     }
 
+    //// to be remvoed. for testing
+    //var patient = {
+    //    "Name": "Jason Argonaut",
+    //    "FHIR ID": "Tbt3KuCY0B5PSrJvCu2j-PlK.aiHsu2xUjUM8bWpetXoB",
+    //    "Gender": "male",
+    //    "Date of Birth": "1985-08-01",
+    //    "Address": "1979 Milky Way Dr.&nbspVerona, WI 53593, US",
+    //    "Home Phone": "608-271-9000",
+    //    "Work Phone": "608-332-9000",
+    //    "Mobile Phone": "608-332-2881",
+    //    "Email": "open@epic.com"
+    //}
+    //$scope.patient = patient;
+
+    //var allergies = [
+    //{
+    //    "Substance": "PENICILLIN G",
+    //    "Status": "confirmed",
+    //    "Recorded Date": "2015-08-24",
+    //    "Reaction": "Hives",
+    //    "Note": "Severity low enough to be prescribed if needed.",
+    //},
+    //{
+    //    "Substance": "SHELLFISH-DERIVED PRODUCTS",
+    //    "Status": "confirmed",
+    //    "Recorded Date": "2015-11-07",
+    //    "Reaction": "Itching",
+    //    "Note": "",
+    //}
+    //];
+
+
+
+    //$scope.allergies = allergies;
 
 }
 
@@ -123,32 +157,20 @@ function setFhirSettings($scope, endpointUrl, testClient) {
 function testCase(caseName, $scope) {
     switch (caseName) {
         case 'epic':
-            //$scope.fhirBaseUrl = "https://open-ic.epic.com/FHIR";
-            //$scope.clientId = epicClientId;
-            //$scope.redirectUri = redirectUri;
             setFhirSettings($scope, "https://open-ic.epic.com/FHIR/api/FHIR/DSTU2/", epicClient);
             break;
 
         case 'ohmcExt':
-            //$scope.fhirBaseUrl = "https://sfd.overlakehospital.org/FHIRproxy";
-            //$scope.clientId = orchardClientIdPrd;
-            //$scope.redirectUri = redirectUri;
             setFhirSettings($scope, "https://sfd.overlakehospital.org/FHIRproxy/api/FHIR/DSTU2/");
             break;
 
         case 'ohmcInt':
         default:
-            //$scope.fhirBaseUrl = "https://epicic.ohmc.org/Interconnect-FHIR";
-            //$scope.clientId = orchardClientIdPrd;
-            //$scope.redirectUri = redirectUri;
             setFhirSettings($scope, "https://epicic.ohmc.org/Interconnect-FHIR/api/FHIR/DSTU2/")
             
     }
-    //$scope.fhirAuthUrl = $scope.fhirBaseUrl + "/oauth2/authorize?response_type=code&client_id=" + $scope.clientId + "&redirect_uri=" + $scope.redirectUri;
-    //$scope.fhirTokenUrl = $scope.fhirBaseUrl + "/oauth2/token";
-    //$scope.fhirEndpointUrl = $scope.fhirBaseUrl + "/api/FHIR/DSTU2";
-
-    //sessionStorage.setItem('testCase', caseName);
+    
+    $scope.oauthLogin()
 }
 
 function getAccessToken($scope, $http) {
@@ -187,7 +209,7 @@ function getAccessToken($scope, $http) {
             loadFhirData($scope, $http);
         },
         function (error) {
-            $scope.statusText = "Error : " + error.statusText;
+            $scope.statusText = "Error exchanging access token: " + error.status + " - " + error.statusText;
         }
     );
 }
@@ -205,7 +227,7 @@ function loadFhirData($scope, $http) {
     $('#emrLogin').addClass('collapse');
     $('#emrData').removeClass('collapse');
     $('#btnLogin').removeClass('hidden');
-    $scope.statusText = "";
+    //$scope.statusText = "";
 
 }
 
@@ -251,17 +273,17 @@ function getPatData(resource, $scope, $http) {
             displayData(resource, substance, $scope);
         },
         function (error) {
-            $('#data' + resource.name).html("Error : " + errorStatus + " - " + error.statusText);
+            $('#data' + resource.name).html("Error retrieving patient data: " + error.status + " - " + error.statusText);
         }
         );
 }
 
 function displayData(resource, data, $scope) {
     if (resource.name === "Patient") {
-        displayPatient(data, $scope)
+        displayPatient(data, $scope);
     }
     else if (resource.name === "AllergyIntolerance") {
-        displayAllergy(data, $scope)
+        displayAllergy(data, $scope);
     }
     else{}
         
@@ -269,31 +291,103 @@ function displayData(resource, data, $scope) {
 }
 
 function displayPatient(data, $scope) {
-    var patient;
+    var patient = {
+        "Name": "",
+        "FHIR ID": "",
+        "Gender": "",
+        "Date of Birth": "",
+        "Address": "",
+        "Home Phone": "",
+        "Work Phone": "",
+        "Mobile Phone": "",
+        "Email": ""
+    }
+    var address;
+    var phone;
+    var tmp;
 
-    //patient.birthDate = data.birthDate;
-    //patient.gender = data.gender;
-    //patient.id = data.id;
-    //patient.familyName = data.name[0].family;
-    //patient.givenName = data.name[0].given;
+    patient["Date of Birth"] = data.birthDate;
+    patient["Gender"] = data.gender;
+    patient["FHIR ID"] = data.id;
+    patient["Name"] = data.name[0].given + " " + data.name[0].family;
+        
+    for (ln=0; ln < data.address.length; ln++) {
+        if (data.address[ln].use === 'home'){
+            address = data.address[ln].line.join(' ');
+            address = address + ", " + data.address[ln].city + ", " + data.address[ln].state + " " + data.address[ln].postalCode + ", " + data.address[ln].country;
+        }
+    }
+    patient["Address"] = address;
+
+    for (ln = 0; ln < data.telecom.length; ln++) {
+        tmp = data.telecom[ln];
+        if (tmp.system === "phone") {
+            if (tmp.use === "home") {
+                patient["Home Phone"] = tmp.value;
+            }
+            else if (tmp.use === "work") {
+                patient["Work Phone"] = tmp.value;
+            }
+            else if (tmp.use === "mobile") {
+                patient["Mobile Phone"] = tmp.value;
+            }
+        }
+        else if (tmp.system === "email") {
+            patient["Email"] = tmp.value;
+        }
+    }
+
+    //var jsonHtmlTable = ConvertJsonToTable(eval(data), 'jsonTable', null, 'Download')
     
-    //for (ln=0; ln < data.address.length; ln++) {
-    //    if (data.address[ln].use === 'home'){
-    //        patient.address.line[0] = data.address[ln].line.join(' ');
-    //        patient.address.line[1] = data.address[ln].city + ", " + data.address[ln].state + " " + data.address[ln].postalCode + ", " + data.address[ln].country;
-    //    }
-    //}
-
-    var jsonHtmlTable = ConvertJsonToTable(eval(data), 'jsonTable', null, 'Download')
-    
-    $('#tablePatient').html(jsonHtmlTable);
-   
-
-
+    //$('#tablePatient').html(jsonHtmlTable);
+    $scope.patientDemo = patient;
 }
 
 function displayAllergy(data, $scope) {
 
+    var tmpEntry;
+    var tmpStr = "";
+    
+
+    if (data.total < 1) { return; }
+
+    var allergies = new Array(data.total);
+
+    try {
+        for (ln = 0; ln < data.total; ln++) {
+            var oneAllergy = {
+                "Substance": "",
+                "Status": "",
+                "Recorded Date": "",
+                "Reaction": "",
+                "Note": "",
+            };
+            tmpEntry = data.entry[ln].resource;
+
+            oneAllergy["Substance"] = tmpEntry.substance.text;
+            oneAllergy["Status"] = tmpEntry.status;
+            oneAllergy["Recorded Date"] = tmpEntry.recordedDate.split("T")[0];
+
+            tmpStr = "";
+            for (ln2 = 0; ln2 < tmpEntry.reaction.length; ln2++) {
+                if (ln2 > 0) { tmpStr = tmpStr + ", " };
+                tmpStr = tmpStr + tmpEntry.reaction[ln2].manifestation[0].text;
+            }
+            oneAllergy["Reaction"] = tmpStr;
+
+            if (typeof tmpEntry["note"] == 'undefined')
+            {
+                oneAllergy["Note"] = "";
+            }
+            else {
+                oneAllergy["Note"] = tmpEntry.note.text;
+            }
+            allergies[ln] = oneAllergy;
+        };
+    }
+    catch (error) { /* ignore */ };
+    
+    $scope.allergies = allergies;
 }
 
 var app = angular.module('myApp', []);
@@ -323,7 +417,7 @@ app.controller('myCtrl', ['$scope', '$http', function ($scope, $http) {
 
     $scope.reLogin = function () {
         $('#emrLogin').removeClass('collapse');
-        $('#emrData').addClass('collapse');
+        //$('#emrData').addClass('collapse');
         $('#btnLogin').addClass('hidden');
     }
 
