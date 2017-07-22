@@ -362,13 +362,15 @@ function displayAllergy(data, $scope) {
                 "Reaction": "",
                 "Note": "",
             };
+            allergies[ln] = oneAllergy;
+            
             tmpEntry = data.entry[ln].resource;
 
             oneAllergy["Substance"] = tmpEntry.substance.text;
             oneAllergy["Status"] = tmpEntry.status;
             oneAllergy["Recorded Date"] = tmpEntry.recordedDate.split("T")[0];
 
-            if (tmpEntry["reaction"] == 'undefined') {
+            if (typeof tmpEntry["reaction"] == 'undefined') {
                 oneAllergy["Reaction"] = "";
             } else {
           
@@ -387,7 +389,7 @@ function displayAllergy(data, $scope) {
             else {
                 oneAllergy["Note"] = tmpEntry.note.text;
             }
-            allergies[ln] = oneAllergy;
+            //allergies[ln] = oneAllergy;
         };
     }
     catch (error) { /* ignore */ };
