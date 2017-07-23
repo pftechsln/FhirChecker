@@ -24,9 +24,9 @@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                     <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar">-</span>
-                    <span class="icon-bar">-</span>
-                    <span class="icon-bar">-</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">FHIR Checker</a>
             </div>
@@ -161,11 +161,46 @@
                     </div>
 
                     <div id="immunization" class="tab-pane fade">
-                        <div><pre id="dataImmunization" class="json"></pre></div>
+                        <table class="table table-bordered table-hover table-responsive table-condensed bg-info">
+                            <thead>
+                                <tr>
+                                    <th ng-repeat="(key, value) in immunizations[0]">{{key}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="t in immunizations track by $index">
+                                    <td ng-repeat="(key, value) in t">{{value}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <ul class="nav nav-tabs-justified">
+                            <li class="active" data-toggle="collapse" data-target="#dataImmunization"><a href="#">Full result in Json</a></li>
+                        </ul>   
+
+                        <div><pre id="dataImmunization" class="json collapse"></pre></div>
                     </div>
+
                     <div id="medication" class="tab-pane fade">
-                        <div><pre id="dataMedicationOrder" class="json"></pre></div>
+                        <table class="table table-bordered table-hover table-responsive table-condensed bg-warning">
+                            <thead>
+                                <tr>
+                                    <th ng-repeat="(key, value) in medications[0]">{{key}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="t in medications track by $index">
+                                    <td ng-repeat="(key, value) in t">{{value}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <ul class="nav nav-tabs-justified">
+                            <li class="active" data-toggle="collapse" data-target="#dataMedicationOrder"><a href="#">Full result in Json</a></li>
+                        </ul>   
+                        <div><pre id="dataMedicationOrder" class="json collapse"></pre></div>
                     </div>
+
                     <div id="lab" class="tab-pane fade">
                         <div><pre id="dataObservation" class="json"></pre></div>
                     </div>
@@ -173,7 +208,7 @@
             </div>
 
             <div class="col-sm-2" >                
-                <div class="box text-right" id="tabTitles" data-spy="affix" data-offset-top="50">
+                <div class="box text-right" id="tabTitles">
                     <button class="btn btn-default btn-block text-center" ng-click="loadFhirData()">Reload Data</button>
                     <hr />
                     <div class="container-fluid text-left" style="padding: 0">
