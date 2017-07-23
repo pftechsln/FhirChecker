@@ -96,7 +96,7 @@ function launch($scope, $http) {
     //    "Substance": "PENICILLIN G",
     //    "Status": "confirmed",
     //    "Recorded Date": "2015-08-24",
-    //    "Reaction": "Hives",
+    //    "Reaction": "Hives", 
     //    "Note": "Severity low enough to be prescribed if needed.",
     //},
     //{
@@ -285,6 +285,12 @@ function displayData(resource, data, $scope) {
     else if (resource.name === "AllergyIntolerance") {
         displayAllergy(data, $scope);
     }
+    else if (resource.name === "Immunization") {
+        extractImmunization(data, $scope);
+    }
+    else if (resource.name === "MedicationOrder") {
+        extractMedication(data, $scope);
+    }
     else{}
         
 
@@ -362,16 +368,22 @@ function displayAllergy(data, $scope) {
                 "Reaction": "",
                 "Note": "",
             };
+            allergies[ln] = oneAllergy;
             tmpEntry = data.entry[ln].resource;
 
             oneAllergy["Substance"] = tmpEntry.substance.text;
             oneAllergy["Status"] = tmpEntry.status;
             oneAllergy["Recorded Date"] = tmpEntry.recordedDate.split("T")[0];
 
-            tmpStr = "";
-            for (ln2 = 0; ln2 < tmpEntry.reaction.length; ln2++) {
-                if (ln2 > 0) { tmpStr = tmpStr + ", " };
-                tmpStr = tmpStr + tmpEntry.reaction[ln2].manifestation[0].text;
+            if (typeof tmpEntry["reaction"] == 'undefined') {
+                tmpStr = "";
+            }
+            else {
+                tmpStr = "";
+                for (ln2 = 0; ln2 < tmpEntry.reaction.length; ln2++) {
+                    if (ln2 > 0) { tmpStr = tmpStr + ", " };
+                    tmpStr = tmpStr + tmpEntry.reaction[ln2].manifestation[0].text;
+                }
             }
             oneAllergy["Reaction"] = tmpStr;
 
@@ -382,12 +394,111 @@ function displayAllergy(data, $scope) {
             else {
                 oneAllergy["Note"] = tmpEntry.note.text;
             }
-            allergies[ln] = oneAllergy;
+            
         };
     }
     catch (error) { /* ignore */ };
     
     $scope.allergies = allergies;
+}
+
+function extractImmunization(data, $scope) {
+
+    var tmpEntry;
+    var tmpStr = "";
+
+
+    if (data.total < 1) { return; }
+
+    var immunizations = new Array(data.total);
+
+    try {
+        for (ln = 0; ln < data.total; ln++) {
+
+            tmpEntry = data.entry[ln].resource;
+            if (tmpEntry.resourceType === "Immunization") {
+
+                var oneImm = {
+                    "Vaccine": "",
+                    "Date": "",
+                    "Site": "",
+                    "Route": "",
+                };
+                immunizations[ln] = oneImm;
+
+                oneImm["Vaccine"] = tmpEntry.vaccineCode.text;
+                oneImm["Date"] = tmpEntry.date.split("T")[0];
+
+                if (typeof tmpEntry["site"] == 'undefined') {
+                    oneImm["Site"] = "";
+                } else {
+                    oneImm["Site"] = tmpEntry.site.text;
+                }
+
+                if (typeof tmpEntry["route"] == "undefined") {
+                    oneImm["Route"] = "";
+                } else {
+                    oneImm["Route"] = tmpEntry.route.text;
+                }
+                
+            }
+        }
+    }
+    catch (error) {
+    };
+
+    $scope.immunizations = immunizations;
+}
+
+
+function extractMedication(data, $scope) {
+
+    var tmpEntry;
+    var tmpStr = "";
+
+
+    if (data.total < 1) { return; }
+
+    var medications = new Array(data.total);
+
+    try {
+        for (ln = 0; ln < data.total; ln++) {
+
+            tmpEntry = data.entry[ln].resource;
+            if (tmpEntry.resourceType === "MedicationOrder") {
+
+                var oneMed = {
+                    "Medication": "",
+                    "Date": "",
+                    "Status": "",
+                    "Prescriber": "",
+                    "Dosage Instruction": ""
+                };
+                medications[ln] = oneMed;
+
+                oneMed["Medication"] = tmpEntry.medicationReference.display;
+                oneMed["Date"] = tmpEntry.dateWritten.split("T")[0];
+                oneMed["Status"] = tmpEntry.status;
+
+                if (typeof tmpEntry["prescriber"] == 'undefined') {
+                    oneMed["Prescriber"] = "";
+                } else {
+                    oneMed["Prescriber"] = tmpEntry.prescriber.display;
+                }
+
+                if (typeof tmpEntry["dosageInstruction"] == 'undefined') {
+                    oneMed["Dosage Instruction"] = "";
+                } else {
+                    oneMed["Dosage Instruction"] = tmpEntry.dosageInstruction[0].text;
+                }
+
+            }
+        }
+    }
+    catch (error) {
+    };
+
+    $scope.medications = medications;
 }
 
 var app = angular.module('myApp', []);
