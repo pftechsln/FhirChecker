@@ -21,7 +21,8 @@ var resources = [
 // Constants: Testing Client
 var defaultClient = {
     name: 'PatientFHIR',
-    clientId: "c45f46c7-66cb-4ac5-b8d0-d66f5260e419",
+    //clientId: "c45f46c7-66cb-4ac5-b8d0-d66f5260e419",
+    clientId: "6c3586a3-a669-4944-aab1-ad5234348f56",
     redirectUri: "https://peixianli.github.io/FhirChecker/",
 }
 
