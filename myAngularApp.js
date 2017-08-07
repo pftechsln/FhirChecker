@@ -21,15 +21,15 @@ var resources = [
 // Constants: Testing Client
 var defaultClient = {
     name: 'PatientFHIR',
-    clientId: "c45f46c7-66cb-4ac5-b8d0-d66f5260e419",
-    redirectUri: "https://localhost:44300/",
+    clientId: "6c12dff4-24e7-4475-a742-b08972c4ea27",
+    redirectUri: "https://pftechsln.github.io/FhirChecker",
 }
 
 // Constants: Epic Client
 var epicClient = {
     name: 'Epic Client',
     clientId: "6c12dff4-24e7-4475-a742-b08972c4ea27",
-    redirectUri: "https://localhost:44300/",
+    redirectUri: "https://pftechsln.github.io/FhirChecker",
 }
 
 // Constants : FHIR Organization URLs (will read from a file or
